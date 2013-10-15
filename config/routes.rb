@@ -1,6 +1,9 @@
 PusherChat::Application.routes.draw do
 
   root to: 'hello_world#hello_world'
+  get '/push_event', to: 'hello_world#push_event', as: 'push_event'
+
+
   # The priority is based upon order of creation: first created -> highest priority.
   # See how all your routes lay out with "rake routes".
 
