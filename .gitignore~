@@ -1,0 +1,16 @@
+**/tmtags
+.bundle
+.DS_Store
+.idea
+.sass-cache
+.tm_properties
+bin
+config/database.yml
+db/*.sqlite3
+db/*structure.sql
+db/schema.rb
+log/*
+mails/*
+private
+public/assets/*
+tmp/*
