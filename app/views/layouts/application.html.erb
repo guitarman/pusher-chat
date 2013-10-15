@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>PusherChat</title>
+  <%= stylesheet_link_tag    "application", media: "all", "data-turbolinks-track" => true %>
+  <%= javascript_include_tag "application", "data-turbolinks-track" => true %>
+  <script src="http://js.pusher.com/2.1/pusher.min.js"></script>
+  <%= csrf_meta_tags %>
+  <script type="text/javascript">
+      // Enable pusher logging - don't include this in production
+      Pusher.log = function(message) {
+          if (window.console && window.console.log) {
+              window.console.log(message);
+          }
+      };
+
+      var pusher = new Pusher('APP_KEY');
+      var channel = pusher.subscribe('pusher_test_channel');
+      channel.bind('my_event', function(data) {
+          alert(data.message);
+      });
+  </script>
+
+</head>
+<body>
+
+<%= yield %>
+
+</body>
+</html>
