@@ -4,7 +4,6 @@
 .idea
 .iml
 .tm_properties
-bin
 config/database.yml
 db/*.sqlite3
 db/*structure.sql
