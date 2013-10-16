@@ -7,8 +7,10 @@ $(document).ready =>
 
   $(".sign-in").click (e) ->
     presenceChannel = pusher.subscribe('presence-test-channel')
-
+    presenceChannel.bind 'pusher:member_added', (member) ->
+      $(".chat-list").append(member.info.name + "<br>")
     presenceChannel.bind 'my_event', (data) ->
       alert data.message
 
-    alert "you are signed in"
+    $(this).replaceWith("<div>you are signed in</div>")
+
