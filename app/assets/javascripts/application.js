@@ -14,4 +14,9 @@
 //= require jquery_ujs
 //= require turbolinks
 //= require pusher/pusher
+//= require underscore
+//= require backbone
+//= require backbone_rails_sync
+//= require backbone_datalink
+//= require backbone/pusher_chat
 //= require_tree .

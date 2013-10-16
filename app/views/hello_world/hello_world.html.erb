@@ -1,12 +1,20 @@
-Hello world
-<br>
-<br>
-<%= link_to "push event!", push_event_path, :remote => true %>
-<br>
-<div class="sign-in">
-  Sign me into chat
-</div>
-<br>
-<div class="chat-list">
-  Online users: <br>
-</div>
+<div id="container">Loading chat...</div>
+
+<script>
+    window.app = new PusherChat.Router();
+    Backbone.history.start();
+</script>
+
+
+<!--Hello world-->
+<!--<br>-->
+<!--<br>-->
+<!--<%= link_to "push event!", push_event_path, :remote => true %>-->
+<!--<br>-->
+<!--<div class="sign-in">-->
+  <!--Sign me into chat-->
+<!--</div>-->
+<!--<br>-->
+<!--<div class="chat-list">-->
+  <!--Online users: <br>-->
+<!--</div>-->
