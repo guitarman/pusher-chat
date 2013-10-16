@@ -3,11 +3,12 @@ class UserController < ApplicationController
 
   def auth
     logger.error "auth"
+    id = Random.rand(1000)
     response = Pusher[params[:channel_name]].authenticate(params[:socket_id], {
-        :user_id => 1234, # => required
+        :user_id => id, # => required
         :user_info => { # => optional - for example
-                        :name =>"test_name",
-                        :email => "test_email"
+                        :name =>"test_name-#{id}",
+                        :email => "test_email@#{id}"
         }
     })
     logger.error "response" + response.to_s
