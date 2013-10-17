@@ -29,6 +29,10 @@ gem 'jbuilder', '~> 1.2'
 gem 'pusher'
 gem "rails-backbone"
 
+gem "haml"
+gem 'haml_coffee_assets'
+gem "haml_assets"
+
 group :doc do
   # bundle exec rake doc:rails generates the API under doc/api.
   gem 'sdoc', require: false
