@@ -1,17 +1,14 @@
 class UserController < ApplicationController
+  include ApplicationHelper
   protect_from_forgery :except => :auth # stop rails CSRF protection for this action
 
   def auth
-    logger.error "auth"
-    id = Random.rand(1000)
     response = Pusher[params[:channel_name]].authenticate(params[:socket_id], {
-        :user_id => id, # => required
-        :user_info => { # => optional - for example
-                        :name =>"test_name-#{id}",
-                        :email => "test_email@#{id}"
-        }
+      :user_id => current_user.id,
+      :user_info => {
+        :name => current_user.name
+      }
     })
-    logger.error "response" + response.to_s
     render :json => response
   end
 end

@@ -1,3 +1,7 @@
+<%= link_to "Send test message via public channel", push_event_path, :remote => true %>
+<br>
+<br>
+
 You are signed in as <%= current_user.name %>
 <div id="container">Loading chat...</div>
 
@@ -5,17 +9,3 @@ You are signed in as <%= current_user.name %>
     window.app = new PusherChat.Router();
     Backbone.history.start();
 </script>
-
-
-<!--Hello world-->
-<!--<br>-->
-<!--<br>-->
-<!--<%= link_to "push event!", push_event_path, :remote => true %>-->
-<!--<br>-->
-<!--<div class="sign-in">-->
-  <!--Sign me into chat-->
-<!--</div>-->
-<!--<br>-->
-<!--<div class="chat-list">-->
-  <!--Online users: <br>-->
-<!--</div>-->

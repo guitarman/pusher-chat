@@ -3,4 +3,5 @@ class PusherChat.Router extends Backbone.Router
     "" : "index"
 
   index: ->
-    alert "from backbone"
+    view = new PusherChat.Views.ChatIndex()
+    $('#container').html(view.render().el)
