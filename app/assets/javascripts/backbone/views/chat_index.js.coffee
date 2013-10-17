@@ -1,6 +1,9 @@
 class PusherChat.Views.ChatIndex extends Backbone.View
   template: JST['backbone/templates/chat_index']
 
+  initialize: (options) ->
+    @currentUserId = options.currentUserId
+
   render: ->
     $(@el).html(@template())
     @subscribeToPresence()
@@ -17,6 +20,11 @@ class PusherChat.Views.ChatIndex extends Backbone.View
     @presenceChannel.bind 'pusher:subscription_succeeded', (members) =>
       members.each (member) => @addUserToList(member)
 
+    @privateUserChannel = @pusher.subscribe("private-user-#{@currentUserId}")
+
+    @privateUserChannel.bind 'pusher:subscription_succeeded', =>
+      @privateUserChannel.bind 'notification', (data) => @processNotification(data)
+
     @presenceChannel.bind 'pusher:member_added', (member) => @addUserToList(member)
     @presenceChannel.bind 'pusher:member_removed', (member) => @removeUserFromlist(member)
 
@@ -28,3 +36,5 @@ class PusherChat.Views.ChatIndex extends Backbone.View
   removeUserFromlist: (member) ->
     $("#user-#{member.id}").remove()
 
+  processNotification: (data) ->
+    console.log "do something with: #{data}"

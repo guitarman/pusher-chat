@@ -7,5 +7,6 @@ You are signed in as <%= current_user.name %>
 
 <script>
     window.app = new PusherChat.Router();
+    window.app.currentUserId = "<%= current_user.id %>";
     Backbone.history.start();
 </script>
