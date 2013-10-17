@@ -5,6 +5,9 @@ PusherChat::Application.routes.draw do
 
   post '/auth', to: 'user#auth', as: 'auth'
 
+  resources :messages
+  resources :channels
+
   # The priority is based upon order of creation: first created -> highest priority.
   # See how all your routes lay out with "rake routes".
 
