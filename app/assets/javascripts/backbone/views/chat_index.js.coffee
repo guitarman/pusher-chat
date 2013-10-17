@@ -6,27 +6,35 @@ class PusherChat.Views.ChatIndex extends Backbone.View
 
   render: ->
     $(@el).html(@template())
-    @subscribeToPresence()
+    @connectToPusher()
     this
 
-  subscribeToPresence: ->
+  connectToPusher: ->
     Pusher.log = (message) ->
       if (window.console && window.console.log)
         window.console.log(message)
 
     @pusher = new Pusher('MY_APP_KEY', { authEndpoint: '/auth' })
+    @subscribeToPresenceChannel('presence-test-channel')
+    @subscribeToPrivateChannel("private-user-#{@currentUserId}")
 
-    @presenceChannel = @pusher.subscribe('presence-test-channel')
+  subscribeToPresenceChannel: (presenceChannelName) ->
+    @presenceChannel = @pusher.subscribe(presenceChannelName)
     @presenceChannel.bind 'pusher:subscription_succeeded', (members) =>
       members.each (member) => @addUserToList(member)
 
-    @privateUserChannel = @pusher.subscribe("private-user-#{@currentUserId}")
+    @presenceChannel.bind 'pusher:member_added', (member) => @addUserToList(member)
+    @presenceChannel.bind 'pusher:member_removed', (member) => @removeUserFromlist(member)
+
+    @saveChannel(presenceChannelName)
+
+  subscribeToPrivateChannel: (privateChannelName) ->
+    @privateUserChannel = @pusher.subscribe(privateChannelName)
 
     @privateUserChannel.bind 'pusher:subscription_succeeded', =>
       @privateUserChannel.bind 'notification', (data) => @processNotification(data)
 
-    @presenceChannel.bind 'pusher:member_added', (member) => @addUserToList(member)
-    @presenceChannel.bind 'pusher:member_removed', (member) => @removeUserFromlist(member)
+    @saveChannel(privateChannelName)
 
   addUserToList: (member) ->
     if $("#user-#{member.id}").length == 0
@@ -38,3 +46,6 @@ class PusherChat.Views.ChatIndex extends Backbone.View
 
   processNotification: (data) ->
     console.log "do something with: #{data}"
+
+  saveChannel: (channelName) ->
+    console.log "save channel to db with name #{channelName}"
