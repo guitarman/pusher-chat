@@ -1,11 +1,10 @@
-require 'pusher'
-
 class HelloWorldController < ApplicationController
   include ApplicationHelper
+  include PusherHelper
 
   def hello_world
     sign_in
-    Pusher.url = "MY_APP_URL"
+    initialize_pusher
   end
 
   def push_event
