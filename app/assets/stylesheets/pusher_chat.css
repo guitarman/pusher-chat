@@ -1,0 +1,10 @@
+.chat-window {
+    border: 1px solid black;
+    width: 200px;
+}
+
+.conversation {
+    min-height:200px;
+    height:auto !important;
+    height:200px;
+}
