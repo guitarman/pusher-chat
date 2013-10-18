@@ -10,7 +10,8 @@ module PusherHelper
     Pusher[target_channel_name].trigger(event_type, {
         message: message,
         from: current_user.id,
-        fromName: current_user.name
+        fromName: current_user.name,
+        channelName: target_channel_name
     })
   end
 end
