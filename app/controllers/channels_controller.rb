@@ -2,7 +2,7 @@ class ChannelsController < ApplicationController
   respond_to :json
 
   def create
-    respond_with Channel.create(permitted_params)
+    respond_with Channel.find_or_create_by(permitted_params)
   end
 
   private
