@@ -1,4 +1,4 @@
-class PusherChat.Views.OnlineUser extends Backbone.View
+class PusherChat.Views.OnlineUserView extends Backbone.View
   template: JST['backbone/templates/online_user']
 
   render: ->

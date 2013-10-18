@@ -1,4 +1,4 @@
-class PusherChat.Views.ChatIndex extends Backbone.View
+class PusherChat.Views.ChatIndexView extends Backbone.View
   template: JST['backbone/templates/chat_index']
 
   initialize: (options) ->
@@ -36,7 +36,7 @@ class PusherChat.Views.ChatIndex extends Backbone.View
 
   addUserToList: (member) ->
     if $("#user-#{member.id}").length == 0
-      onlineUserView = new PusherChat.Views.OnlineUser(user: member)
+      onlineUserView = new PusherChat.Views.OnlineUserView(user: member)
       $('.online-users-list').append(onlineUserView.render().el)
 
   removeUserFromlist: (member) ->
