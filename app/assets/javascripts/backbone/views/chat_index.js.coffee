@@ -48,4 +48,9 @@ class PusherChat.Views.ChatIndex extends Backbone.View
     console.log "do something with: #{data}"
 
   saveChannel: (channelName) ->
-    console.log "save channel to db with name #{channelName}"
+    attributes = name: channelName
+    channel = new PusherChat.Models.Channel()
+    channel.save attributes,
+      success: -> console.log "Channel was saved"
+      error: -> console.log "Channel was not saved"
+
