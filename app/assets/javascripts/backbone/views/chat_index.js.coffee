@@ -19,20 +19,18 @@ class PusherChat.Views.ChatIndex extends Backbone.View
     @subscribeToPrivateChannel("private-user-#{@currentUserId}")
 
   subscribeToPresenceChannel: (presenceChannelName) ->
-    @presenceChannel = @pusher.subscribe(presenceChannelName)
-    @presenceChannel.bind 'pusher:subscription_succeeded', (members) =>
+    presenceChannel = @pusher.subscribe(presenceChannelName)
+    presenceChannel.bind 'pusher:subscription_succeeded', (members) =>
       members.each (member) => @addUserToList(member)
 
-    @presenceChannel.bind 'pusher:member_added', (member) => @addUserToList(member)
-    @presenceChannel.bind 'pusher:member_removed', (member) => @removeUserFromlist(member)
-
+    presenceChannel.bind 'pusher:member_added', (member) => @addUserToList(member)
+    presenceChannel.bind 'pusher:member_removed', (member) => @removeUserFromlist(member)
     @saveChannel(presenceChannelName)
 
   subscribeToPrivateChannel: (privateChannelName) ->
-    @privateUserChannel = @pusher.subscribe(privateChannelName)
-
-    @privateUserChannel.bind 'pusher:subscription_succeeded', =>
-      @privateUserChannel.bind 'notification', (data) => @processNotification(data)
+    privateUserChannel = @pusher.subscribe(privateChannelName)
+    privateUserChannel.bind 'pusher:subscription_succeeded', =>
+      privateUserChannel.bind 'notification', (data) => @processNotification(data)
 
     @saveChannel(privateChannelName)
 
@@ -49,8 +47,6 @@ class PusherChat.Views.ChatIndex extends Backbone.View
 
   saveChannel: (channelName) ->
     attributes = name: channelName
-    channel = new PusherChat.Models.Channel()
-    channel.save attributes,
+    @collection.create attributes,
       success: -> console.log "Channel was saved"
       error: -> console.log "Channel was not saved"
-
