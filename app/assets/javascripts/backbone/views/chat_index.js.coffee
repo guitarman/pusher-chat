@@ -44,6 +44,9 @@ class PusherChat.Views.ChatIndexView extends Backbone.View
 
   processNotification: (data) ->
     console.log "do something with: #{data}"
+    #for now, automatically accept chat invitation, subscribe to channel & show new chat window
+    chatWindowView = new PusherChat.Views.ChatWindowView()
+    $('.chat-windows').append(chatWindowView.render().el)
 
   saveChannel: (channelName) ->
     attributes = name: channelName
