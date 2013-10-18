@@ -1,2 +1,9 @@
-.chat-window
-  new chat window
+.chat-window{:id => "window-<%= channelName %>"}
+  Conversation with <%= targetUserName %>
+  .conversation{:id => "conversation-<%= channelName %>"}
+  .new-message-form
+    %form{:id => "<%= channelName %>"}
+      %label Message:
+      %input{:type=> "text", :id => "<%= channelName %>-message"}
+      %input{:type => "submit", :value => "Send", :class => "button"}
+
