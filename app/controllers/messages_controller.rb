@@ -1,4 +1,5 @@
 class MessagesController < ApplicationController
+  include PusherHelper
   respond_to :json
 
   def index
@@ -6,8 +7,12 @@ class MessagesController < ApplicationController
   end
 
   def create
-    logger.error "Save message, then push it to the right channel"
-    respond_with Message.create(permitted_params)
+    message = Message.create(permitted_params)
+
+    body_array = message.body.split(',')
+    send_to_channel(body_array[0], message.event_type, body_array[1])
+
+    respond_with message
   end
 
   private
