@@ -15,7 +15,7 @@ class PusherChat.Views.ChatWindowView extends Backbone.View
   sendMessage: (event) ->
     event.preventDefault()
     messageText = $("##{@channelName}-message").val()
-    attributes = event_type: 'message', body: "#{@channelName},#{messageText}"
+    attributes = event_type: 'message', body: "#{messageText}", channel_name: "#{@channelName}"
 
     message = new PusherChat.Models.Message()
     message.save attributes,

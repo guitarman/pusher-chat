@@ -47,18 +47,24 @@ class PusherChat.Views.ChatIndexView extends Backbone.View
 
   processNotification: (data) ->
     #for now, automatically accept chat invitation, subscribe to channel & show new chat window
-    privateConvChannelName = data.message
-
-    privateConversationChannel = @pusher.subscribe(privateConvChannelName)
-    privateConversationChannel.bind 'pusher:subscription_succeeded', =>
-      privateConversationChannel.bind 'message', (data) => @processMessage(data)
-      chatWindowView = new PusherChat.Views.ChatWindowView({channelName: privateConvChannelName, targetUserName: data.fromName})
-      $('.chat-windows').append(chatWindowView.render().el)
+    message = new PusherChat.Models.Message({id: data.message})
+    message.fetch
+      success: =>
+        privateConvChannelName = message.attributes.body
+        privateConversationChannel = @pusher.subscribe(privateConvChannelName)
+        privateConversationChannel.bind 'pusher:subscription_succeeded', =>
+          privateConversationChannel.bind 'message', (data) => @processMessage(data)
+          chatWindowView = new PusherChat.Views.ChatWindowView({channelName: privateConvChannelName, targetUserName: ""})
+          $('.chat-windows').append(chatWindowView.render().el)
 
   processMessage: (data) =>
     console.log "you have new message"
-    console.log data
-    $("#conversation-#{data.channelName}").append("<div><strong>#{data.fromName}:</strong> #{data.message}</div>")
+    console.log data.message
+
+    message = new PusherChat.Models.Message({id: data.message})
+    message.fetch
+      success: =>
+        $("#conversation-#{message.attributes.channel_name}").append("<div><strong>:</strong> #{message.attributes.body}</div>")
 
   saveChannel: (channelName) ->
     attributes = name: channelName
@@ -71,7 +77,7 @@ class PusherChat.Views.ChatIndexView extends Backbone.View
     targetUserId = event.target.id.replace("user-", "")
 
     privateConvChannelName = "private-#{@currentUserId}-#{targetUserId}"
-    attributes = event_type: 'chat-invitation', body: "private-user-#{targetUserId},#{privateConvChannelName}"
+    attributes = event_type: 'chat-invitation', body: "#{privateConvChannelName}", channel_name: "private-user-#{targetUserId}"
 
     message = new PusherChat.Models.Message()
     message.save attributes,
