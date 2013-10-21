@@ -4,6 +4,9 @@ class User < ActiveRecord::Base
   has_many :message_views
   has_many :messages, :through => :message_views
 
+  has_many :subscriptions
+  has_many :channels, :through => :subscriptions
+
   def self.current(user_id)
     User.find_by id: user_id
   end
