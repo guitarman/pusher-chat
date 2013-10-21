@@ -6,11 +6,14 @@ class MessagesController < ApplicationController
     respond_with Message.all
   end
 
+  def show
+    respond_with Message.find(params[:id])
+  end
+
   def create
     message = Message.create(permitted_params)
 
-    body_array = message.body.split(',')
-    send_to_channel(body_array[0], message.event_type, body_array[1])
+    send_to_channel(message)
 
     respond_with message
   end
@@ -18,6 +21,6 @@ class MessagesController < ApplicationController
   private
 
   def permitted_params
-    params[:message].permit(:body, :event_type)
+    params[:message].permit(:body, :event_type, :channel_name)
   end
 end
