@@ -6,12 +6,9 @@ module PusherHelper
     Pusher.url = "MY_APP_URL"
   end
 
-  def send_to_channel(target_channel_name, event_type, message)
-    Pusher[target_channel_name].trigger(event_type, {
-        message: message,
-        from: current_user.id,
-        fromName: current_user.name,
-        channelName: target_channel_name
+  def send_to_channel(message)
+    Pusher[message.channel_name].trigger(message.event_type, {
+      message: message.id
     })
   end
 end
