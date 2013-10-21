@@ -5,6 +5,8 @@ PusherChat::Application.routes.draw do
 
   post '/auth', to: 'user#auth', as: 'auth'
 
+  post '/webhook', to: 'pusher#webhook', as: 'webhook'
+
   resources :messages
   resources :channels
 
