@@ -43,17 +43,18 @@ class PusherChat.Views.ChatIndexView extends Backbone.View
 #    @saveChannel(privateChannelName)
 
   showUserInOnlineList: (member) ->
-    #if (@me.id != member.id)
-    $("#offline-user-#{member.id}").remove()
-    if ($("#online-user-#{member.id}").length == 0)
-      userView = new PusherChat.Views.UserView(user: member, state: "online")
-      $('.online-users-list ul').append(userView.render().el)
+    if (@currentUserId != member.id)
+      $(".offline#user-#{member.id}").remove()
+      if ($(".online#user-#{member.id}").length == 0)
+        userView = new PusherChat.Views.UserView(user: member, state: "online")
+        $('.online-users-list ul').append(userView.render().el)
 
   showUserInOfflineList: (member) ->
-    $("#online-user-#{member.id}").remove()
-    if ($("#offline-user-#{member.id}").length == 0)
-      userView = new PusherChat.Views.UserView(user: member, state: "offline")
-      $('.offline-users-list ul').append(userView.render().el)
+    if (@currentUserId != member.id)
+      $(".online#user-#{member.id}").remove()
+      if ($(".offline#user-#{member.id}").length == 0)
+        userView = new PusherChat.Views.UserView(user: member, state: "offline")
+        $('.offline-users-list ul').append(userView.render().el)
 
 #  processNotification: (data) ->
 #    #for now, automatically accept chat invitation, subscribe to channel & show new chat window
