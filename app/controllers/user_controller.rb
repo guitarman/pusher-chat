@@ -16,6 +16,6 @@ class UserController < ApplicationController
     users = presence_channel_users
     users_ids = users ? users[:users].map { |user| user.values }.flatten : ""
 
-    render :json => User.offline_users(users_ids)
+    @offline_users = User.offline_users(users_ids)
   end
 end
