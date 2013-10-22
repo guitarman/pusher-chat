@@ -26,10 +26,10 @@ class PusherChat.Views.ChatIndexView extends Backbone.View
     presenceChannel.bind 'pusher:subscription_succeeded', (members) =>
       members.each (member) => @showUserInOnlineList(member)
 
-    #get offline users
-    $.ajax(url: "/offline_users", dataType: 'json').done (data) =>
-      for user in data
-        @showUserInOfflineList(user)
+      #get offline users
+      $.ajax(url: "/offline_users", dataType: 'json').done (data) =>
+        for user in data
+          @showUserInOfflineList(user)
 
     presenceChannel.bind 'pusher:member_added', (member) => @showUserInOnlineList(member)
     presenceChannel.bind 'pusher:member_removed', (member) => @showUserInOfflineList(member)
