@@ -4,6 +4,7 @@ class PusherChat.Views.UserView extends Backbone.View
   template: JST['backbone/templates/user']
 
   render: ->
-    $(this.el).attr('id', "#{this.options.state}-user-#{this.options.user.id}")
+    $(this.el).attr('id', "user-#{this.options.user.id}")
+    $(this.el).attr('class', this.options.state)
     $(@el).html(@template({attributes: this.options.user}))
     this
