@@ -9,6 +9,8 @@ PusherChat::Application.routes.draw do
 
   post '/update_subscription', to: 'pusher#update_subscription', as: 'update_subscription'
 
+  post 'channels/create_subscriptions', to: 'channels#create_subscriptions', as: 'channels/create_subscriptions'
+
   resources :messages
   resources :channels
 
