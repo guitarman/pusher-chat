@@ -3,6 +3,8 @@ PusherChat::Application.routes.draw do
   root to: 'hello_world#hello_world'
   get '/push_event', to: 'hello_world#push_event', as: 'push_event'
 
+  get '/offline_users', to: 'user#offline_users', as: 'offline_users'
+
   post '/auth', to: 'user#auth', as: 'auth'
 
   post '/webhook', to: 'pusher#webhook', as: 'webhook'

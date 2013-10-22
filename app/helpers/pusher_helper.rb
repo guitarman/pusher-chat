@@ -1,4 +1,5 @@
 require 'pusher'
+
 module PusherHelper
   include ApplicationHelper
 
@@ -10,5 +11,9 @@ module PusherHelper
     Pusher[message.channel_name].trigger(message.event_type, {
       message: message.id
     })
+  end
+
+  def presence_channel_users
+    Pusher.get('/channels/presence-test-channel/users')
   end
 end
