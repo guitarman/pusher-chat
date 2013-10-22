@@ -10,4 +10,8 @@ class User < ActiveRecord::Base
   def self.current(user_id)
     User.find_by id: user_id
   end
+
+  def self.offline_users(online_user_ids)
+    where.not(id: online_user_ids)
+  end
 end
