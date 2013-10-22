@@ -14,4 +14,13 @@ class User < ActiveRecord::Base
   def self.offline_users(online_user_ids)
     where.not(id: online_user_ids)
   end
+
+  def update_subscription_state(channel_id, state)
+    subscription = subscriptions.find_by(channel_id: channel_id)
+    if subscription.blank?
+      subscriptions << Subscription.new(channel_id: channel_id, state: state)
+    else
+      subscription.update_attributes(state: state)
+    end
+  end
 end

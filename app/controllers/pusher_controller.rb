@@ -1,16 +1,17 @@
 class PusherController < ApplicationController
-  protect_from_forgery :except => :webhook
+  protect_from_forgery
 
-  def webhook
-    logger.error request
-    webhook = Pusher::WebHook.new(request)
-    if webhook.valid?
-      webhook.events.each do |event|
+  def update_subscription
+    web_hook = Pusher::WebHook.new(request)
+    if web_hook.valid?
+      web_hook.events.each do |event|
         case event["name"]
           when 'member_added'
-            puts "Member addded: #{event["channel"]}"
+            update_subscription_state(event, :online)
           when 'member_removed'
-            puts "Member removed: #{event["channel"]}"
+            update_subscription_state(event, :offline)
+          else
+            logger.info "unidentified event"
         end
       end
       render text: 'ok', status: 200
@@ -19,4 +20,12 @@ class PusherController < ApplicationController
     end
   end
 
+  private
+
+  def update_subscription_state(event, state)
+    user = User.find(event["user_id"])
+    channel = Channel.find_by(name: event["channel"])
+
+    user.update_subscription_state(channel.id, state)
+  end
 end
