@@ -7,12 +7,12 @@ class MessagesController < ApplicationController
   end
 
   def show
-    message = Message.find(params[:id])
+    @message = Message.find(params[:id], include: :sender)
 
     #only my message is viewed
-    message.read_message(current_user.id)
+    @message.read_message(current_user.id)
 
-    respond_with message
+    respond_with @message
   end
 
   def create
