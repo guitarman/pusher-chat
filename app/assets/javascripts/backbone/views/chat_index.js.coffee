@@ -59,8 +59,8 @@ class PusherChat.Views.ChatIndexView extends Backbone.View
         $('.offline-users-list ul').append(userView.render().el)
 
 
-  saveChannel: (channelName, otherAttributes = null) ->
-    attributes = name: channelName
+  saveChannel: (channelName, recipient_ids = null) ->
+    attributes = name: channelName, recipient_ids: recipient_ids
     @collection.create attributes,
       success: -> console.log "Channel was saved"
       error: -> console.log "Channel was not saved"
@@ -70,44 +70,41 @@ class PusherChat.Views.ChatIndexView extends Backbone.View
     targetUserId = event.target.id.replace("user-", "")
 
     presenceConvChannelName = "presence-#{@currentUserId}-#{targetUserId}"
-    @saveChannel(presenceConvChannelName)
+    @saveChannel(presenceConvChannelName, [targetUserId, @currentUserId])
 
-    #call initialize chat
-
-  initializeChat: ->
+  initializeChat: (model) ->
     #save subscriptions
-    console.log "saving subscriptions"
+    console.log "saving subscriptions", model.attributes
+    if (model.attributes.recipient_ids != null)
+      $.ajax(
+        type: "POST"
+        url: "channels/create_subscriptions"
+        dataType: 'json'
+        data: {subscribers: model.attributes.recipient_ids, channelName: model.attributes.name}
+      ).complete (data) =>
+        attributes =
+          event_type: 'chat-invitation'
+          body: "#{model.attributes.name}"
+          channel_name: "private-user-#{model.attributes.recipient_ids[0]}"
 
-#    $.ajax(
-#      type: "POST"
-#      url: "channels/create_subscriptions"
-#      dataType: 'json'
-#      data: {subscribers: [targetUserId, @currentUserId], channelName: channelName}
-#    ).complete (data) =>
-#      console.log "subscriptions created"
+        message = new PusherChat.Models.Message()
+        message.save attributes,
+          success: =>
+            console.log "Message sent"
+          error: -> console.log "Message was not sent"
 
-    #send message
-#    attributes =
-#      event_type: 'chat-invitation'
-#      body: "#{channelName}"
-#      channel_name: "private-user-#{targetUserId}"
+
+  processNotification: (data) ->
+    console.log "your new message ", data
+
+#        privateConversationChannel = @pusher.subscribe(channelName)
+#        privateConversationChannel.bind 'pusher:subscription_succeeded', =>
+#          privateConversationChannel.bind 'message', (data) => @processMessage(data)
+#          chatWindowView = new PusherChat.Views.ChatWindowView({channelName: privateConvChannelName, targetUserName: event.target.innerText})
+#          $('.chat-windows').append(chatWindowView.render().el)
 #
-#    message = new PusherChat.Models.Message()
-#    message.save attributes,
-#      success: =>
-#        console.log "Message sent"
-##        privateConversationChannel = @pusher.subscribe(channelName)
-##        privateConversationChannel.bind 'pusher:subscription_succeeded', =>
-##          privateConversationChannel.bind 'message', (data) => @processMessage(data)
-##          chatWindowView = new PusherChat.Views.ChatWindowView({channelName: privateConvChannelName, targetUserName: event.target.innerText})
-##          $('.chat-windows').append(chatWindowView.render().el)
-#      error: -> console.log "Message was not sent"
-
-  sendMessage: ->
-
-
-
-
+#
+#
 #  processNotification: (data) ->
 #    #for now, automatically accept chat invitation, subscribe to channel & show new chat window
 #    message = new PusherChat.Models.Message({id: data.message})
