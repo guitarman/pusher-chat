@@ -9,7 +9,7 @@ class ChannelsController < ApplicationController
     channel = Channel.find_by(name: params[:channelName])
     params[:subscribers].each do |subscriber_id|
       subscriber = User.find(subscriber_id)
-      Subscription.find_or_create_by(channel: channel, user: subscriber).to_yaml
+      Subscription.find_or_create_by(channel: channel, user: subscriber)
     end
 
     render text: 'ok', status: 200
