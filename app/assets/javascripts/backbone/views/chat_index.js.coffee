@@ -40,7 +40,7 @@ class PusherChat.Views.ChatIndexView extends Backbone.View
   subscribeToPrivateChannel: (privateChannelName) ->
     privateUserChannel = @pusher.subscribe(privateChannelName)
     privateUserChannel.bind 'pusher:subscription_succeeded', =>
-      privateUserChannel.bind 'chat-invitation', (data) => @processNotification(data)
+      privateUserChannel.bind 'chat-invitation', (data) => @readChannel(data)
 
     @saveChannel(privateChannelName)
 
@@ -57,7 +57,6 @@ class PusherChat.Views.ChatIndexView extends Backbone.View
       if ($(".offline#user-#{member.id}").length == 0)
         userView = new PusherChat.Views.UserView(user: member, state: "offline")
         $('.offline-users-list ul').append(userView.render().el)
-
 
   saveChannel: (channelName, recipient_ids = null) ->
     attributes = name: channelName, recipient_ids: recipient_ids
@@ -94,26 +93,25 @@ class PusherChat.Views.ChatIndexView extends Backbone.View
         message.save attributes,
           success: =>
             console.log "Message sent"
-            #open chat window
+            @openConversationWindow(model.attributes.name)
           error: -> console.log "Message was not sent"
 
-  processNotification: (data) ->
-    console.log "your new notification ", data
+  readChannel: (data) =>
+    console.log "your new message ", data
     message = new PusherChat.Models.Message({id: data.message})
     message.fetch
       success: =>
-        conversationChannel = @pusher.subscribe(message.attributes.body)
-        conversationChannel.bind 'pusher:subscription_succeeded', =>
-          conversationChannel.bind 'message', (data) => @processMessage(data)
+        if message.attributes.event_type == "chat-invitation"
+          console.log "it was invitation"
+          conversationChannel = @pusher.subscribe(message.attributes.body)
+          conversationChannel.bind 'pusher:subscription_succeeded', =>
+            conversationChannel.bind 'message', (data) => @readChannel(data)
+        else if message.attributes.event_type == "message"
+          console.log "the real message", message
 
-  processMessage: (data) =>
-    console.log "your new message ", data
-
-#        privateConversationChannel = @pusher.subscribe(channelName)
-#        privateConversationChannel.bind 'pusher:subscription_succeeded', =>
-#          privateConversationChannel.bind 'message', (data) => @processMessage(data)
-#          chatWindowView = new PusherChat.Views.ChatWindowView({channelName: privateConvChannelName, targetUserName: event.target.innerText})
-#          $('.chat-windows').append(chatWindowView.render().el)
+  openConversationWindow: (channelName)->
+    chatWindowView = new PusherChat.Views.ChatWindowView({channelName: channelName})
+    $('.chat-windows').append(chatWindowView.render().el)
 
 #    message = new PusherChat.Models.Message({id: data.message})
 #    message.fetch
