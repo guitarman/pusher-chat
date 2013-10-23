@@ -97,17 +97,18 @@ class PusherChat.Views.ChatIndexView extends Backbone.View
           error: -> console.log "Message was not sent"
 
   readChannel: (data) =>
-    console.log "your new message ", data
     message = new PusherChat.Models.Message({id: data.message})
     message.fetch
       success: =>
-        if message.attributes.event_type == "chat-invitation"
-          console.log "it was invitation"
-          conversationChannel = @pusher.subscribe(message.attributes.body)
-          conversationChannel.bind 'pusher:subscription_succeeded', =>
-            conversationChannel.bind 'message', (data) => @readChannel(data)
-        else if message.attributes.event_type == "message"
-          console.log "the real message", message
+        @processMessage(message)
+
+   processMessage: (message) =>
+    if message.attributes.event_type == "chat-invitation"
+      conversationChannel = @pusher.subscribe(message.attributes.body)
+      conversationChannel.bind 'pusher:subscription_succeeded', =>
+        conversationChannel.bind 'message', (data) => @readChannel(data)
+    else if message.attributes.event_type == "message"
+      console.log "the real message", message
 
   openConversationWindow: (channelName)->
     chatWindowView = new PusherChat.Views.ChatWindowView({channelName: channelName})
