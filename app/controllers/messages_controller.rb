@@ -11,11 +11,18 @@ class MessagesController < ApplicationController
   end
 
   def create
-    logger.error "creating a message"
-    #sender = current_user
     message = Message.new(permitted_params)
 
-    #send_to_channel(message)
+    if permitted_params[:event_type] == "chat-invitation"
+      message.channel = Channel.find_or_create_by(name: permitted_params[:channel_name])
+      message.sender = current_user
+
+      logger.error message.to_yaml
+      message.save
+      #save to views
+    end
+
+    send_to_channel(message)
 
     respond_with message
   end
