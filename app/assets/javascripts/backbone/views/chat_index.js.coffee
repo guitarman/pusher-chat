@@ -61,8 +61,12 @@ class PusherChat.Views.ChatIndexView extends Backbone.View
 
   saveChannel: (channelName, recipient_ids = null) ->
     attributes = name: channelName, recipient_ids: recipient_ids
-    @collection.create attributes,
-      success: -> console.log "Channel was saved"
+    channel = new PusherChat.Models.Channel()
+    channel.save attributes,
+      success: =>
+        @collection.add(channel)
+        console.log @collection
+        console.log "Channel was saved"
       error: -> console.log "Channel was not saved"
 
   startChat: (event) ->
@@ -73,7 +77,6 @@ class PusherChat.Views.ChatIndexView extends Backbone.View
     @saveChannel(presenceConvChannelName, [targetUserId, @currentUserId])
 
   initializeChat: (model) ->
-    #save subscriptions
     console.log "saving subscriptions", model.attributes
     if (model.attributes.recipient_ids != null)
       $.ajax(
@@ -91,10 +94,19 @@ class PusherChat.Views.ChatIndexView extends Backbone.View
         message.save attributes,
           success: =>
             console.log "Message sent"
+            #open chat window
           error: -> console.log "Message was not sent"
 
-
   processNotification: (data) ->
+    console.log "your new notification ", data
+    message = new PusherChat.Models.Message({id: data.message})
+    message.fetch
+      success: =>
+        conversationChannel = @pusher.subscribe(message.attributes.body)
+        conversationChannel.bind 'pusher:subscription_succeeded', =>
+          conversationChannel.bind 'message', (data) => @processMessage(data)
+
+  processMessage: (data) =>
     console.log "your new message ", data
 
 #        privateConversationChannel = @pusher.subscribe(channelName)
@@ -102,25 +114,7 @@ class PusherChat.Views.ChatIndexView extends Backbone.View
 #          privateConversationChannel.bind 'message', (data) => @processMessage(data)
 #          chatWindowView = new PusherChat.Views.ChatWindowView({channelName: privateConvChannelName, targetUserName: event.target.innerText})
 #          $('.chat-windows').append(chatWindowView.render().el)
-#
-#
-#
-#  processNotification: (data) ->
-#    #for now, automatically accept chat invitation, subscribe to channel & show new chat window
-#    message = new PusherChat.Models.Message({id: data.message})
-#    message.fetch
-#      success: =>
-#        privateConvChannelName = message.attributes.body
-#        privateConversationChannel = @pusher.subscribe(privateConvChannelName)
-#        privateConversationChannel.bind 'pusher:subscription_succeeded', =>
-#          privateConversationChannel.bind 'message', (data) => @processMessage(data)
-#          chatWindowView = new PusherChat.Views.ChatWindowView({channelName: privateConvChannelName, targetUserName: ""})
-#          $('.chat-windows').append(chatWindowView.render().el)
 
-#  processMessage: (data) =>
-#    console.log "you have new message"
-#    console.log data.message
-#
 #    message = new PusherChat.Models.Message({id: data.message})
 #    message.fetch
 #      success: =>
