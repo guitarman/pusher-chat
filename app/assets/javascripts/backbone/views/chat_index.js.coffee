@@ -94,6 +94,9 @@ class PusherChat.Views.ChatIndexView extends Backbone.View
           success: =>
             console.log "Message sent"
             @openConversationWindow(model.attributes.name)
+            conversationChannel = @pusher.subscribe(model.attributes.name)
+            conversationChannel.bind 'pusher:subscription_succeeded', =>
+              conversationChannel.bind 'message', (data) => @readChannel(data)
           error: -> console.log "Message was not sent"
 
   readChannel: (data) =>
