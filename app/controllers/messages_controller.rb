@@ -11,9 +11,11 @@ class MessagesController < ApplicationController
   end
 
   def create
-    message = Message.create(permitted_params)
+    logger.error "creating a message"
+    #sender = current_user
+    message = Message.new(permitted_params)
 
-    send_to_channel(message)
+    #send_to_channel(message)
 
     respond_with message
   end
