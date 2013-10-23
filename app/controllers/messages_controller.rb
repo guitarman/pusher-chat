@@ -7,7 +7,12 @@ class MessagesController < ApplicationController
   end
 
   def show
-    respond_with Message.find(params[:id])
+    message = Message.find(params[:id])
+
+    #only my message is viewed
+    message.read_message(current_user.id)
+
+    respond_with message
   end
 
   def create
@@ -17,9 +22,13 @@ class MessagesController < ApplicationController
       message.channel = Channel.find_or_create_by(name: permitted_params[:channel_name])
       message.sender = current_user
 
-      logger.error message.to_yaml
       message.save
-      #save to views
+    elsif permitted_params[:event_type] == "message"
+      message.channel = Channel.find_or_create_by(name: permitted_params[:channel_name])
+      message.sender = current_user
+
+      message.users = message.channel.users
+      message.save
     end
 
     send_to_channel(message)
