@@ -5,6 +5,7 @@ class PusherChat.Views.ChatIndexView extends Backbone.View
     @currentUserId = options.currentUserId
     @pusher = new Pusher('MY_APP_ID', { authEndpoint: '/auth' })
     @collection.on('add', @initializeChat, this)
+    @openedConversations = []
 
   events:
     'click .offline-users-list ul li': 'startChat'
@@ -64,7 +65,6 @@ class PusherChat.Views.ChatIndexView extends Backbone.View
     channel.save attributes,
       success: =>
         @collection.add(channel)
-        console.log @collection
         console.log "Channel was saved"
       error: -> console.log "Channel was not saved"
 
@@ -108,13 +108,17 @@ class PusherChat.Views.ChatIndexView extends Backbone.View
       conversationChannel.bind 'pusher:subscription_succeeded', =>
         conversationChannel.bind 'message', (data) => @readChannel(data)
     else if message.attributes.event_type == "message"
-      console.log "the real message", message
+      console.log "message ", message
+      @openConversationWindow(message.attributes.channel_name) unless @isConversationOpen(message.attributes.channel_name)
+      $("#conversation-#{message.attributes.channel_name}").append("<div><strong>#{message.attributes.sender_name}</strong><small>[#{message.attributes.time}]</small> : #{message.attributes.body}</div>")
 
-  openConversationWindow: (channelName)->
+  isConversationOpen: (channelName) =>
+    if @openedConversations.indexOf(channelName) == -1
+      false
+    else
+      true
+
+  openConversationWindow: (channelName) ->
+    @openedConversations.push channelName
     chatWindowView = new PusherChat.Views.ChatWindowView({channelName: channelName})
     $('.chat-windows').append(chatWindowView.render().el)
-
-#    message = new PusherChat.Models.Message({id: data.message})
-#    message.fetch
-#      success: =>
-#        $("#conversation-#{message.attributes.channel_name}").append("<div><strong>:</strong> #{message.attributes.body}</div>")
