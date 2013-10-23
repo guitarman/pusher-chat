@@ -7,6 +7,6 @@ class Message < ActiveRecord::Base
 
   def read_message(user_id)
     message_view = message_views.find_by(user_id: user_id)
-    message_views.update_attributes(viewed: true) if message_view
+    message_view.update_attributes(viewed: true) if message_view
   end
 end
