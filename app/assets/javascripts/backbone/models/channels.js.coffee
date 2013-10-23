@@ -1,4 +1,7 @@
 class PusherChat.Models.Channel extends Backbone.Model
+  defaults:
+    recipient_ids: []
+
   url: ->
     return "/channels"
 
