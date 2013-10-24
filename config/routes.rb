@@ -2,6 +2,7 @@ PusherChat::Application.routes.draw do
 
   root to: 'hello_world#hello_world'
   get '/push_event', to: 'hello_world#push_event', as: 'push_event'
+  get '/subscriptions', to: 'channels#current_user_subscriptions', as: 'subscriptions'
 
   get '/offline_users', to: 'user#offline_users', as: 'offline_users'
 

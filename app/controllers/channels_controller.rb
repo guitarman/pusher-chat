@@ -1,4 +1,5 @@
 class ChannelsController < ApplicationController
+  include ApplicationHelper
   respond_to :json
 
   def create
@@ -13,6 +14,11 @@ class ChannelsController < ApplicationController
     end
 
     render text: 'ok', status: 200
+  end
+
+  def current_user_subscriptions
+    @channels = current_user.channels
+    respond_with @channels
   end
 
   private
