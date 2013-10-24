@@ -35,11 +35,17 @@ class PusherChat.Views.ChatIndexView extends Backbone.View
           @showUserInOfflineList(user)
 
       #get my subscriptions and listen to them
-      $.ajax(url: "/subscriptions", dataType: 'json').done (data) =>
-        for channel in data
-          conversationChannel = @pusher.subscribe(channel.name)
-          conversationChannel.bind 'pusher:subscription_succeeded', =>
-            conversationChannel.bind 'message', (data) => @readChannel(data)
+#      $.ajax(url: "/subscriptions", dataType: 'json').done (data) =>
+#        for channel in data
+#          conversationChannel = @pusher.subscribe(channel.name)
+#          conversationChannel.bind 'pusher:subscription_succeeded', =>
+#            conversationChannel.bind 'message', (data) => @readChannel(data)
+
+      #get offline messages
+      $.ajax(url: "/offline_messages", dataType: 'json').done (data) =>
+        console.log "offline messages", data
+        for message in data
+          @processMessage(message)
 
     presenceChannel.bind 'pusher:member_added', (member) => @showUserInOnlineList(member)
     presenceChannel.bind 'pusher:member_removed', (member) => @showUserInOfflineList(member)
@@ -110,17 +116,17 @@ class PusherChat.Views.ChatIndexView extends Backbone.View
     message = new PusherChat.Models.Message({id: data.message})
     message.fetch
       success: =>
-        @processMessage(message)
+        @processMessage(message.attributes)
 
    processMessage: (message) =>
-    if message.attributes.event_type == "chat-invitation"
-      conversationChannel = @pusher.subscribe(message.attributes.body)
+    if message.event_type == "chat-invitation"
+      conversationChannel = @pusher.subscribe(message.body)
       conversationChannel.bind 'pusher:subscription_succeeded', =>
         conversationChannel.bind 'message', (data) => @readChannel(data)
-    else if message.attributes.event_type == "message"
+    else if message.event_type == "message"
       console.log "message ", message
-      @openConversationWindow(message.attributes.channel_name) unless @isConversationOpen(message.attributes.channel_name)
-      $("#conversation-#{message.attributes.channel_name}").append("<div><strong>#{message.attributes.sender_name}</strong><small>[#{message.attributes.time}]</small> : #{message.attributes.body}</div>")
+      @openConversationWindow(message.channel_name) unless @isConversationOpen(message.channel_name)
+      $("#conversation-#{message.channel_name}").append("<div><strong>#{message.sender_name}</strong><small>[#{message.time}]</small> : #{message.body}</div>")
 
   isConversationOpen: (channelName) =>
     if @openedConversations.indexOf(channelName) == -1
