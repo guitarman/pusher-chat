@@ -11,6 +11,6 @@ class Message < ActiveRecord::Base
   end
 
   def self.unread_messages
-    includes(:message_views)
+    includes(:message_views).where("message_views.viewed = false")
   end
 end

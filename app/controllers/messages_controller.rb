@@ -36,6 +36,10 @@ class MessagesController < ApplicationController
     respond_with message
   end
 
+  def offline_messages
+    @offline_messages = Message.unread_messages.includes(:sender).where("message_views.user_id = #{current_user.id}")
+  end
+
   private
 
   def permitted_params
