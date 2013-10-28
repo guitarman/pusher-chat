@@ -3,7 +3,13 @@ PusherChat::Application.routes.draw do
   root to: 'hello_world#hello_world'
   get '/push_event', to: 'hello_world#push_event', as: 'push_event'
 
+  get '/offline_users', to: 'user#offline_users', as: 'offline_users'
+
   post '/auth', to: 'user#auth', as: 'auth'
+
+  post '/update_subscription', to: 'pusher#update_subscription', as: 'update_subscription'
+
+  post 'channels/create_subscriptions', to: 'channels#create_subscriptions', as: 'channels/create_subscriptions'
 
   resources :messages
   resources :channels

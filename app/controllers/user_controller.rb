@@ -1,5 +1,5 @@
 class UserController < ApplicationController
-  include ApplicationHelper
+  include ApplicationHelper, PusherHelper
   protect_from_forgery :except => :auth # stop rails CSRF protection for this action
 
   def auth
@@ -10,5 +10,12 @@ class UserController < ApplicationController
       }
     })
     render :json => response
+  end
+
+  def offline_users
+    users = presence_channel_users
+    users_ids = users ? users[:users].map { |user| user.values }.flatten : ""
+
+    @offline_users = User.offline_users(users_ids)
   end
 end

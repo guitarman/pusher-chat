@@ -6,11 +6,32 @@ class MessagesController < ApplicationController
     respond_with Message.all
   end
 
-  def create
-    message = Message.create(permitted_params)
+  def show
+    @message = Message.find(params[:id], include: :sender)
 
-    body_array = message.body.split(',')
-    send_to_channel(body_array[0], message.event_type, body_array[1])
+    #only my message is viewed
+    @message.read_message(current_user.id)
+
+    respond_with @message
+  end
+
+  def create
+    message = Message.new(permitted_params)
+
+    if permitted_params[:event_type] == "chat-invitation"
+      message.channel = Channel.find_or_create_by(name: permitted_params[:channel_name])
+      message.sender = current_user
+
+      message.save
+    elsif permitted_params[:event_type] == "message"
+      message.channel = Channel.find_or_create_by(name: permitted_params[:channel_name])
+      message.sender = current_user
+
+      message.users = message.channel.users
+      message.save
+    end
+
+    send_to_channel(message)
 
     respond_with message
   end
@@ -18,6 +39,6 @@ class MessagesController < ApplicationController
   private
 
   def permitted_params
-    params[:message].permit(:body, :event_type)
+    params[:message].permit(:body, :event_type, :channel_name)
   end
 end

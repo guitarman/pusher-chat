@@ -1,3 +1,3 @@
 class PusherChat.Models.Message extends Backbone.Model
   url: ->
-    return "/messages"
+    return if @isNew() then "/messages" else "/messages/#{@id}"
